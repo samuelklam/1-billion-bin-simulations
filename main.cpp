@@ -30,7 +30,7 @@ long random_generator_1bill() {
 }
 
 /*
- * Function return the # of balls the bin it falls into has
+ * Function returns the # of balls the bin it falls into has
  * @param n : # bin selected
  * @param ball_counts : reference to vector containing ball counts
  */
@@ -99,7 +99,7 @@ void update_bin_values(long bin_index, vector<bin_node> &ball_counts) {
 }
 
 /*
- * Function retrieves the largest number of balls in an existing bin from a vector
+ * Function returns the largest number of balls in an existing bin from a vector
  * @param ball_counts : reference to vector containing ball counts
  */
 long retrieve_max_bin(vector<bin_node> &ball_counts) {
@@ -108,14 +108,13 @@ long retrieve_max_bin(vector<bin_node> &ball_counts) {
 
 /*
  * Function returns the largest number of balls in any bin
- * @param n : # bin selected
+ * @param n : # of ball throws
  * @param ball_counts : reference to vector containing ball counts
  */
 long ball_simulations(long n, bool algo_flag) {
     vector<bin_node> ball_counts(1);
     ball_counts[0].end = NUM_BINS;
     
-    // run 1 billion simulations
     if (algo_flag == 0) {
         for (long i = 0; i < n; i++) {
             long rand_num = random_generator_1bill();
@@ -145,7 +144,7 @@ int main(int argc, const char * argv[]) {
     start = clock();
     
     int num_trials = 10;
-    bool algo_flag = 1;
+    bool algo_flag = 0;
     
     for (int i = 0; i < num_trials; i++) {
         cout << "Largest # of Balls in any Bin: " << ball_simulations(NUM_BALL_THROWS, algo_flag) << endl;
