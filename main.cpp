@@ -2,6 +2,8 @@
 //  main.cpp
 //  bin-simulations
 //
+//  Driver function to run simulations of tossing a large # of balls into a large # of bins
+//
 
 #include <iostream>
 #include <random>
@@ -69,7 +71,7 @@ long retrieve_max_bin(vector<long> &ball_counts) {
 /*
  * Function returns the largest number of balls in any bin
  * @param n : # of ball throws
- * @param ball_counts : reference to vector containing ball counts
+ * @param algo_flag : 0 to run simulation 1, 1 to run simulation 2
  */
 long ball_simulations(long n, bool algo_flag) {
     vector<long> ball_counts(1);
@@ -103,8 +105,8 @@ int main(int argc, const char * argv[]) {
     clock_t start, end;
     start = clock();
     
-    int num_trials = 10;
-    bool algo_flag = 1;
+    int num_trials = 1;
+    bool algo_flag = 0;
     
     for (int i = 0; i < num_trials; i++) {
         cout << "Largest # of Balls in any Bin: " << ball_simulations(NUM_BALL_THROWS, algo_flag) << endl;
