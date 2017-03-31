@@ -17,11 +17,6 @@ std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_int_distribution<long> dis(1, NUM_BINS);
 
-typedef struct {
-    long start = 1;
-    long end = 0;
-} bin_node;
-
 /*
  * Function returns a random long between [1, 1 NUM_BINS]
  */
@@ -34,14 +29,15 @@ long random_generator_1bill() {
  * @param n : # bin selected
  * @param ball_counts : reference to vector containing ball counts
  */
-long check_num_interval(long n, vector<bin_node> &ball_counts) {
+long check_num_interval(long n, vector<long> &ball_counts) {
     
-    // we set the bin_index to 0 for the case of the first ball being thrown
     long bin_index = 0;
+    long bin_count = 0;
     
     // find which bin count the ball fell into
     for (long i = 0; i < ball_counts.size(); i++) {
-        if (n >= ball_counts[i].start && n <= ball_counts[i].end) {
+        bin_count += ball_counts[i];
+        if (n <= bin_count) {
             bin_index = i;
             break;
         }
@@ -54,56 +50,20 @@ long check_num_interval(long n, vector<bin_node> &ball_counts) {
  * @param bin_index : bin index ball was thrown into
  * @param ball_counts : reference to vector containing ball counts
  */
-void update_bin_values(long bin_index, vector<bin_node> &ball_counts) {
-    
-    // handle the case where we hit a bin of 0 ball count
-    if (bin_index == 0) {
-        // remove a bin of 0 ball count
-        ball_counts[bin_index].start++;
-        
-        // if there are no bins currently with a ball count of 1, add new bin
-        if ((bin_index + 1) == ball_counts.size()) {
-            bin_node new_bin;
-            new_bin.start = 1;
-            new_bin.end = 1;
-            ball_counts.push_back(new_bin);
-        }
-        else {
-            // add a bin of 1 ball count
-            ball_counts[bin_index + 1].end++;
-            bin_index += 2;
-            // increment all the rest of the ranges accordingly
-            for (long j = bin_index; j < ball_counts.size(); j++) {
-                ball_counts[j].start++;
-                ball_counts[j].end++;
-            }
-        }
+void update_bin_values(long bin_index, vector<long> &ball_counts) {
+    ball_counts[bin_index]--;
+    if (bin_index + 1 >= ball_counts.size()) {
+        ball_counts.push_back(0);
     }
-    // handle the cases where we hit a bin of x (where x > 0) ball count
-    else {
-        // remove 1 bin of x ball count
-        ball_counts[bin_index].end--;
-        
-        // if there are no bins currently with ball count of (x + 1), add new bin
-        if ((bin_index + 1) == ball_counts.size()) {
-            bin_node new_bin;
-            new_bin.start = ball_counts[bin_index].end + 1;
-            new_bin.end = new_bin.start;
-            ball_counts.push_back(new_bin);
-        }
-        else {
-            // add 1 bin with ball count of (x+1)
-            ball_counts[bin_index + 1].start--;
-        }
-    }
+    ball_counts[bin_index + 1]++;
 }
 
 /*
  * Function returns the largest number of balls in an existing bin from a vector
  * @param ball_counts : reference to vector containing ball counts
  */
-long retrieve_max_bin(vector<bin_node> &ball_counts) {
-    return ball_counts.size()-1;
+long retrieve_max_bin(vector<long> &ball_counts) {
+    return ball_counts.size() - 1;
 }
 
 /*
@@ -112,8 +72,8 @@ long retrieve_max_bin(vector<bin_node> &ball_counts) {
  * @param ball_counts : reference to vector containing ball counts
  */
 long ball_simulations(long n, bool algo_flag) {
-    vector<bin_node> ball_counts(1);
-    ball_counts[0].end = NUM_BINS;
+    vector<long> ball_counts(1);
+    ball_counts[0] = NUM_BINS;
     
     if (algo_flag == 0) {
         for (long i = 0; i < n; i++) {
@@ -144,7 +104,7 @@ int main(int argc, const char * argv[]) {
     start = clock();
     
     int num_trials = 10;
-    bool algo_flag = 0;
+    bool algo_flag = 1;
     
     for (int i = 0; i < num_trials; i++) {
         cout << "Largest # of Balls in any Bin: " << ball_simulations(NUM_BALL_THROWS, algo_flag) << endl;
